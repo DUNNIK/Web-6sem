@@ -10,4 +10,20 @@ export class AppController {
   getHello(): object {
     return this.appService.getHello();
   }
+
+  @Get('todoList')
+  @Render('todoList')
+  getHello1() { }
+
+  @Get('mock')
+  @Render('mock')
+  getHello2() { }
+
+  @Get('slider')
+  @Render('slider')
+  getHello3() { }
+
+  @Get('login')
+  @Render('login')
+  getHello4() { }
 }

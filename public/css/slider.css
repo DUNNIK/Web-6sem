@@ -1,7 +1,7 @@
 .main-carousel {
     top: 0;
     left: 0;
-    position: absolute;
+    display: block;
 }
 
 .main-carousel img {
@@ -9,6 +9,7 @@
     width: 400px;
     height: auto;
 }
+
 .flickity-enabled {
     width: 400px;
 }
@@ -24,4 +25,5 @@ body {
     margin:0 25% 0 25%;
     width:50%;
 }
+
 

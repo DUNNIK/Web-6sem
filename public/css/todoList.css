@@ -17,7 +17,7 @@
     text-align: center;
     display: block;
     margin-bottom: 2%;
-    color: #FFD639;
+    color: #fcff19;
 }
 
 .todo-input {
@@ -28,7 +28,7 @@
 
 .todo-button-submit {
     width: 3%;
-    background-color: #FFD639;
+    background-color: #fcff19;
     border-left: none;
     font-size: 1.5em;
 }
@@ -45,7 +45,7 @@
 
 .todo-item__undone {
     color: #000000;
-    background-color: #FFD639;
+    background-color: #fcff19;
     position: relative;
     padding: 10px 10px 10px 30px;
     margin: 8px 30px;
