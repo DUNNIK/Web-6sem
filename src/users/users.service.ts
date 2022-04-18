@@ -1,40 +1,33 @@
-import { User } from '../entities/user.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {User} from '../entities/user.entity';
+import {Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
-    ) {}
-
-    async getUsers(): Promise<Record<string, any>> {
-        let isOk = true;
-        const result = await this.usersRepository.find().catch(error => {
-            isOk = false;
-            console.log(error);
-        });
-
-        if (isOk) {
-            return {code: 200, content: result};
-        } else {
-            return {code: 400, content: {msg: 'Invalid request'}};
-        }
+    ) {
     }
 
-    async addUser(user): Promise<Record<string, any>> {
-        let isOk = true;
-        const result = await this.usersRepository.save(user).catch(error => {
-            isOk = false;
-            console.log(error);
-        });
+    findAll(): Promise<User[]> {
+        return this.usersRepository.find();
+    }
 
-        if (isOk) {
-            return {code: 201, content: result};
-        } else {
-            return {code: 400, content: {msg: 'Invalid request'}};
-        }
+    findOne(id: string): Promise<User> {
+        return this.usersRepository.findOne(id);
+    }
+
+    findByEmail(email: string): Promise<User | undefined> {
+        return this.usersRepository.findOne({email: email});
+    }
+
+    async addUser(user): Promise<void> {
+        await this.usersRepository.save(user)
+    }
+
+    async remove(id: string): Promise<void> {
+        await this.usersRepository.delete(id);
     }
 }

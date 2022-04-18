@@ -1,0 +1,29 @@
+.mdl-layout__content {
+    padding: 24px;
+    flex: none;
+}
+.mdl-textfield__error {
+    visibility: visible;
+    padding: 5px;
+}
+.mdl-card {
+    padding-bottom: 10px;
+    min-width: 500px;
+}
+
+.credentials_form div label {
+    color: #0000ff;
+}
+
+.credentials_form button, .mdl-button {
+    background-color: #ff8209;
+}
+
+.credentials_form{
+    text-align: center;
+    background-color: #fcff19;
+}
+
+.mdl-card__title {
+    background-color: #ff8209;
+}

@@ -2,19 +2,29 @@ import { UsersService } from './users.service';
 import {Body, Controller, Get, Post, Res} from '@nestjs/common';
 import {UsersDTO} from "./dto/users.dto";
 import {validate} from "class-validator";
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {User} from "../entities/user.entity";
 
-
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly userService: UsersService) {}
 
     @Get()
-    getUsers() {
-        return this.userService.getUsers();
+    @ApiResponse({
+        status: 200,
+        description: 'Get all users',
+        type: User,
+    })
+    getUsers(): Promise<User[]> {
+        return this.userService.findAll();
     }
 
     @Post()
-    async addUser(@Body() body, @Res() res) {
+    @ApiOperation({ summary: 'Add user' })
+    @ApiResponse({ status: 400, description: 'Invalid request' })
+    async addUser(@Body() body, @Res() res): Promise<void> {
         let isOk = false;
         const user = new UsersDTO();
         user.id = body.id;
@@ -30,8 +40,7 @@ export class UsersController {
         });
 
         if (isOk) {
-            const result = await this.userService.addUser(user);
-            res.status(result.code).json(result.content);
+            await this.userService.addUser(user);
         } else {
             res.status(400).json({ msg: 'Invalid request' });
         }
