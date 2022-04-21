@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Portfolio} from "./portfolio.entity";
 
 @Entity('users')
 export class User {
@@ -10,5 +11,8 @@ export class User {
 
     @Column()
     pass: string;
+
+    @OneToOne( type => Portfolio , portfolio => portfolio.user)
+    portfolio: Portfolio;
 
 }

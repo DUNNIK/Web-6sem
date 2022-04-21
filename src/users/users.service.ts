@@ -2,6 +2,7 @@ import {User} from '../entities/user.entity';
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
+import {Portfolio} from "../entities/portfolio.entity";
 
 @Injectable()
 export class UsersService {
@@ -27,7 +28,17 @@ export class UsersService {
         await this.usersRepository.save(user)
     }
 
+    async updateUser(user): Promise<void> {
+        await this.usersRepository.update(user.id, user);
+    }
+
+    async getUserPortfolio(userID): Promise<Portfolio> {
+        const user: User = await this.usersRepository.findOne({where: {id: userID}, relations: ['portfolio']});
+        return user.portfolio;
+    }
+
     async remove(id: string): Promise<void> {
         await this.usersRepository.delete(id);
     }
+
 }

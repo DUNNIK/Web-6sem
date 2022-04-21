@@ -3,6 +3,7 @@ import {Body, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {UsersDTO} from "../users/dto/users.dto";
+import {User} from "../entities/user.entity";
 
 @Injectable()
 export class PortfolioService {
@@ -16,12 +17,29 @@ export class PortfolioService {
         return this.portfolioRepository.find();
     }
 
-    findOne(id: string): Promise<Portfolio> {
-        return this.portfolioRepository.findOne(id);
+    findOne(id: string): Promise<Portfolio | undefined> {
+        return this.portfolioRepository.findOne({id : id});
     }
 
-    async addPortfolio(portfolio): Promise<void> {
+    async addPortfolio(portfolio, user): Promise<void> {
+        let portfolioEntity = new Portfolio();
+        portfolioEntity.user = user;
+        portfolioEntity.githubLogin = portfolio.githubLogin;
+        portfolioEntity.instagramLogin = portfolio.instagramLogin;
+        portfolioEntity.telegramLogin = portfolio.telegramLogin;
+        portfolioEntity.vkLogin = portfolio.vkLogin;
+        portfolioEntity.name = portfolio.name;
+        portfolioEntity.surname = portfolio.surname;
+
+        await this.portfolioRepository.save(portfolioEntity)
+    }
+
+    async addPortfolioWithoutUser(portfolio): Promise<void> {
         await this.portfolioRepository.save(portfolio)
+    }
+
+    async updatePortfolio(portfolioNew): Promise<void> {
+        await this.portfolioRepository.update(portfolioNew.id, portfolioNew);
     }
 
     async remove(id: string): Promise<void> {

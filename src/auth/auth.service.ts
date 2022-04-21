@@ -25,7 +25,6 @@ export class AuthService {
 
     async createUser(user: any, @Res() res: Response): Promise<any> {
         const userDTO = new UsersDTO();
-        userDTO.id = uuidv4();
         userDTO.email = user.email;
         userDTO.pass = user.password;
         await this.usersService.addUser(userDTO);

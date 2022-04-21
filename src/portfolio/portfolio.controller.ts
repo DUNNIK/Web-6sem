@@ -4,8 +4,7 @@ import {PortfolioDto} from "./dto/portfolio.dto";
 import {validate} from "class-validator";
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Portfolio} from "../entities/portfolio.entity";
-import { v4 as uuidv4 } from 'uuid';
-import {User} from "../entities/user.entity";
+import {UsersService} from "../users/users.service";
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -41,14 +40,13 @@ export class PortfolioController {
     async addProfile(portfolio : any, @Res() res, user : any): Promise<void> {
         let isOk = false;
         const portfolioDto = new PortfolioDto();
-        portfolioDto.id = uuidv4();
-        portfolioDto.userId = user.id;
         portfolioDto.githubLogin = portfolio.githubLogin;
         portfolioDto.instagramLogin = portfolio.instagramLogin;
         portfolioDto.telegramLogin = portfolio.telegramLogin;
         portfolioDto.vkLogin = portfolio.vkLogin;
         portfolioDto.name = portfolio.name;
         portfolioDto.surname = portfolio.name;
+
 
         await validate(portfolioDto).then(errors => {
             if (errors.length > 0) {
@@ -59,7 +57,7 @@ export class PortfolioController {
         });
 
         if (isOk) {
-            await this.portfolioService.addPortfolio(portfolioDto);
+            await this.portfolioService.addPortfolioWithoutUser(portfolioDto);
         } else {
             res.status(400).json({ msg: 'Invalid request' });
         }

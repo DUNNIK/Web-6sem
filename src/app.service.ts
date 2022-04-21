@@ -7,6 +7,7 @@ import {PortfolioDto} from "./portfolio/dto/portfolio.dto";
 import {validate} from "class-validator";
 import { v4 as uuidv4 } from 'uuid';
 import {Response} from "express";
+import {User} from "./entities/user.entity";
 
 @Injectable()
 export class AppService {
@@ -14,10 +15,7 @@ export class AppService {
   constructor(private readonly usersService: UsersService, private readonly portfolioService: PortfolioService) {}
 
   async editPortfolio(@Res() res: Response, user: any, portfolio: any) {
-    let isOk = false;
     const portfolioDto = new PortfolioDto();
-    portfolioDto.id = uuidv4();
-    portfolioDto.userId = user.id;
     portfolioDto.githubLogin = portfolio.githubLogin;
     portfolioDto.instagramLogin = portfolio.instagramLogin;
     portfolioDto.telegramLogin = portfolio.telegramLogin;
@@ -25,19 +23,11 @@ export class AppService {
     portfolioDto.name = portfolio.name;
     portfolioDto.surname = portfolio.surname;
 
-    await validate(portfolioDto).then(errors => {
-      if (errors.length > 0) {
-        console.log(errors);
-      } else {
-        isOk = true;
-      }
-    });
 
-    if (isOk) {
-      await this.portfolioService.addPortfolio(portfolioDto);
-    } else {
-      res.status(400).json({msg: 'Invalid request'});
-    }
+    let userFind = await this.usersService.findOne(user.id);
+
+
+    await this.portfolioService.addPortfolio(portfolioDto, userFind);
   }
 
 

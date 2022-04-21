@@ -7,9 +7,6 @@ export class PortfolioDto {
     id: string;
 
     @IsString()
-    userId: string;
-
-    @IsString()
     name: string;
 
     @IsString()
@@ -27,6 +24,5 @@ export class PortfolioDto {
     @IsString()
     githubLogin: string;
 
-    @IsString()
-    attachFile: string;
+
 }

@@ -6,10 +6,6 @@ export class Portfolio{
     @PrimaryGeneratedColumn("uuid")
     public id: string;
 
-    @OneToOne(() => Portfolio)
-    @JoinColumn({ name: 'userId' })
-    userId: string;
-
     @Column()
     name: string;
 
@@ -28,6 +24,6 @@ export class Portfolio{
     @Column()
     githubLogin: string;
 
-    @Column({ type: 'varchar', length: 300, nullable: true })
-    attachFile: string;
+    @OneToOne(type => User, user => user.portfolio)
+    user: User;
 }

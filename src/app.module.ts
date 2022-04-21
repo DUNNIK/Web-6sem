@@ -14,9 +14,9 @@ const config = parse('postgres://qsswnldnhzgnpp:a5188af3860c055193fa7bdf2bccf7fe
 @Module({
   imports: [
     UsersModule,
+    PortfolioModule,
     ConfigModule.forRoot(),
     AuthModule,
-    PortfolioModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       username: config.user,

@@ -68,28 +68,18 @@ export class AppController {
     type: User,
   })
   registerLoad(@Request() req): { message: string } {
-    return { message: req.flash('loginError') };
+    return { message: req.flash('registration Error') };
   }
 
 
   @Post('/registration')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads/files',
-      filename: (req, file, cb) => {
-        const randomName = Array(32).fill(null).map(() =>
-            (Math.round(Math.random() * 16)).toString(16)).join('');
-        return cb(null, `${randomName}${extname(file.originalname)}`);
-      },
-    }),
-  }))
   @ApiOperation({summary: 'Register User'})
   @ApiResponse({
     status: 200,
     description: 'Index page has loaded',
     type: User,
   })
-  register(@Res() res: Response, @Body() usersDTO: UsersDTO, @UploadedFile() file) {
+  register(@Res() res: Response, @Body() usersDTO: UsersDTO) {
     res.redirect('/');
     return this.authService.createUser(usersDTO, res)
   }
@@ -107,7 +97,7 @@ export class AppController {
   getHome(@Request() req) {
     return {
       user: req.user,
-      portfolio: req.portfolio
+      portfolio: req.user.portfolio
     };
   }
 
@@ -123,7 +113,7 @@ export class AppController {
   getProfile(@Request() req) {
     return {
       user: req.user,
-      portfolio: req.portfolio
+      portfolio: req.user.portfolio
     };
   }
 
@@ -148,7 +138,6 @@ export class AppController {
     type: User,
   })
   editProfile(@Res() res: Response, @Request() req, @Body() portfolioDTO : PortfolioDto) {
-    res.redirect('/profile');
     return this.appService.editPortfolio(res, req.user, portfolioDTO)
   }
 
@@ -175,7 +164,7 @@ export class AppController {
   getTodoList(@Request() req) {
     return {
       user: req.user,
-      portfolio: req.portfolio
+      portfolio: req.user.portfolio
     };
   }
 
@@ -191,7 +180,7 @@ export class AppController {
   getMock(@Request() req) {
     return {
       user: req.user,
-      portfolio: req.portfolio
+      portfolio: req.user.portfolio
     };
   }
 
@@ -207,7 +196,7 @@ export class AppController {
   getSlider(@Request() req) {
     return {
       user: req.user,
-      portfolio: req.portfolio
+      portfolio: req.user.portfolio
     };
   }
 }
