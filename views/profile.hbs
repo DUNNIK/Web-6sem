@@ -6,19 +6,19 @@
 <header>
     <section id="about_me" class="header__about_me">
         <div class="header__logo">
-            <img src=/img/ава.jpg alt="аватарка" width="189" height="255">
+            <img src=uploads/avatar/{{portfolio.profileImage}}.png alt="аватар" width="255" height="255">
         </div>
         <div class="header__text">
             <div class="header__name">
-                <h1 class="name">{{profile.name}} {{profile.surname}}</h1>
+                <h1 class="name">{{portfolio.name}} {{portfolio.surname}}</h1>
             </div>
             <div class="header__contacts">
                 <h2>Мои контакты</h2>
                 <ul class="contacts">
-                    <li><a href="https://vk.com/{{profile.vkLogin}}">Вконтакте</a></li>
-                    <li><a href="https://www.instagram.com/{{profile.instagramLogin}}">Инстаграм</a></li>
-                    <li><a href="https://t.me/{{profile.telegramLogin}}">Телеграм</a></li>
-                    <li><a href="https://github.com/{{profile.githubLogin}}">GitHub</a></li>
+                    <li><a href="https://vk.com/{{portfolio.vkLogin}}">Вконтакте</a></li>
+                    <li><a href="https://www.instagram.com/{{portfolio.instagramLogin}}">Инстаграм</a></li>
+                    <li><a href="https://t.me/{{portfolio.telegramLogin}}">Телеграм</a></li>
+                    <li><a href="https://github.com/{{portfolio.githubLogin}}">GitHub</a></li>
                 </ul>
             </div>
         </div>

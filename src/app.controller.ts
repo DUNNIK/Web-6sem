@@ -2,19 +2,13 @@ import {
   Controller,
   Post,
   Body,
-  Patch,
-  Param,
   Get,
-  Delete,
-  UsePipes,
-  Query,
   Request,
-  UseInterceptors, UploadedFile, UseGuards, UseFilters, Render, Res,
+  UseInterceptors, UploadedFile, UseGuards, UseFilters, Render, Res, ExecutionContext,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 import {FileInterceptor} from '@nestjs/platform-express';
-import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { LoginGuard } from './common/guards/login.guard';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
@@ -25,15 +19,25 @@ import {AuthService} from "./auth/auth.service";
 import {JwtAuthGuard} from "./common/guards/jwt.guard";
 import {UsersDTO} from "./users/dto/users.dto";
 import {PortfolioService} from "./portfolio/portfolio.service";
-import {PortfolioController} from "./portfolio/portfolio.controller";
 import {AppService} from "./app.service";
 import {PortfolioDto} from "./portfolio/dto/portfolio.dto";
+import {UsersService} from "./users/users.service";
+import path = require('path');
+import { v4 as uuidv4 } from 'uuid';
+import {Portfolio} from "./entities/portfolio.entity";
+import {MessageDto} from "./chat/dto/message.dto";
+
+
 
 @ApiBearerAuth()
 @Controller()
 @UseFilters(AuthExceptionFilter)
 export class AppController {
-  constructor(private readonly authService: AuthService, private readonly portfolioService: PortfolioService, private readonly appService: AppService) { }
+  private wasEdit : Boolean = false;
+
+  constructor(private readonly authService: AuthService, private readonly portfolioService: PortfolioService, private readonly appService: AppService, private readonly usersService: UsersService) {
+
+  }
 
   @Get('/')
   @Render('login')
@@ -79,9 +83,9 @@ export class AppController {
     description: 'Index page has loaded',
     type: User,
   })
-  register(@Res() res: Response, @Body() usersDTO: UsersDTO) {
+  async register(@Res() res: Response, @Body() usersDTO: UsersDTO) {
+    await this.appService.createUser(usersDTO)
     res.redirect('/');
-    return this.authService.createUser(usersDTO, res)
   }
 
 
@@ -103,17 +107,21 @@ export class AppController {
 
   @UseGuards(AuthenticatedGuard)
   @Get('/profile')
-  @ApiOperation({ summary: 'Load profile page' })
+  @ApiOperation({summary: 'Load profile page'})
   @ApiResponse({
     status: 200,
     description: 'Profile page has loaded',
     type: User,
   })
   @Render('profile')
-  getProfile(@Request() req) {
+  async getProfile(@Request() req) {
+    if (this.wasEdit) {
+      req.user.portfolio = await this.usersService.getUserPortfolio(req.user.id);
+      this.wasEdit = false;
+    }
     return {
       user: req.user,
-      portfolio: req.user.portfolio
+      portfolio: req.user.portfolio,
     };
   }
 
@@ -131,14 +139,16 @@ export class AppController {
   }
 
   @Post('/edit')
-  @ApiOperation({ summary: 'Edit profile Data' })
+  @ApiOperation({summary: 'Edit profile Data'})
   @ApiResponse({
     status: 200,
     description: 'Successfully edit profile',
     type: User,
   })
-  editProfile(@Res() res: Response, @Request() req, @Body() portfolioDTO : PortfolioDto) {
-    return this.appService.editPortfolio(res, req.user, portfolioDTO)
+  async editProfile(@Res() res: Response, @Request() req, @Body() portfolioDTO: PortfolioDto) {
+    this.wasEdit = true;
+    await this.appService.editPortfolio(req.user, portfolioDTO);
+    res.redirect('/edit');
   }
 
   @Get('/logout')
@@ -199,4 +209,38 @@ export class AppController {
       portfolio: req.user.portfolio
     };
   }
+
+  @UseGuards(AuthenticatedGuard)
+  @Get('chat')
+  @ApiOperation({ summary: 'Load chat page' })
+  @ApiResponse({
+    status: 200,
+    description: 'Slider page has loaded',
+    type: User,
+  })
+  @Render('chat')
+  getChat(@Request() req) {
+    return {
+      user: req.user,
+      portfolio: req.user.portfolio
+    };
+  }
+
+/*
+  @UseGuards(AuthenticatedGuard)
+  @Post('/chat')
+  @ApiOperation({summary: 'Add message'})
+  @ApiResponse({
+    status: 200,
+    description: 'Message eas added',
+    type: User,
+  })
+  getMessage(@Request() req, @Body() text: string) {
+    return {
+      user: req.user,
+      portfolio: req.user.portfolio,
+      message: text,
+    };
+  }*/
+
 }

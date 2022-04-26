@@ -20,7 +20,7 @@ async function bootstrap() {
   app.engine('.hbs', exphbs.engine({ extname: '.hbs', defaultLayout: 'base' }));
   app.set('views', viewsPath);
   app.set('view engine', '.hbs');
-
+  app.use(require('express').static('public/img'));
   app.use(
       session({
         secret: 'secretKey',

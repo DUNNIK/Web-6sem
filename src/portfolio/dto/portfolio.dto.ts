@@ -24,5 +24,6 @@ export class PortfolioDto {
     @IsString()
     githubLogin: string;
 
-
+    @IsString()
+    profileImage: string;
 }

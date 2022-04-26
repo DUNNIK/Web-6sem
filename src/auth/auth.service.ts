@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import {UsersController} from "../users/users.controller";
 import {Response} from "express";
+import {PortfolioDto} from "../portfolio/dto/portfolio.dto";
+import {PortfolioService} from "../portfolio/portfolio.service";
 
 @Injectable()
 export class AuthService {
@@ -18,15 +20,10 @@ export class AuthService {
         const user = await this.usersService.findByEmail(email);
         if (user && user.pass === pass) {
             const { pass, ...result } = user;
+            result.portfolio = await this.usersService.getUserPortfolio(user.id);
             return result;
         }
         return null;
     }
 
-    async createUser(user: any, @Res() res: Response): Promise<any> {
-        const userDTO = new UsersDTO();
-        userDTO.email = user.email;
-        userDTO.pass = user.password;
-        await this.usersService.addUser(userDTO);
-    }
 }
