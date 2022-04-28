@@ -1,5 +1,4 @@
 import { ExecutionContext, Injectable, CanActivate } from '@nestjs/common';
-import {UsersService} from "../../users/users.service";
 
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {

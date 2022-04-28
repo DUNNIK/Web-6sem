@@ -4,11 +4,10 @@ import {
   Body,
   Get,
   Request,
-  UseInterceptors, UploadedFile, UseGuards, UseFilters, Render, Res, ExecutionContext,
+  UseGuards, UseFilters, Render, Res,
 } from '@nestjs/common';
 
 import { Response } from 'express';
-import {FileInterceptor} from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { LoginGuard } from './common/guards/login.guard';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
@@ -16,7 +15,6 @@ import { AuthExceptionFilter } from './common/filters/auth-exceptions.filter';
 import {ApiBearerAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 import {User} from "./entities/user.entity";
 import {AuthService} from "./auth/auth.service";
-import {JwtAuthGuard} from "./common/guards/jwt.guard";
 import {UsersDTO} from "./users/dto/users.dto";
 import {PortfolioService} from "./portfolio/portfolio.service";
 import {AppService} from "./app.service";
@@ -24,18 +22,30 @@ import {PortfolioDto} from "./portfolio/dto/portfolio.dto";
 import {UsersService} from "./users/users.service";
 import path = require('path');
 import { v4 as uuidv4 } from 'uuid';
-import {Portfolio} from "./entities/portfolio.entity";
-import {MessageDto} from "./chat/dto/message.dto";
+import {MessagesService} from "./messages/messages.service";
 
+export const storage = {
+  storage: diskStorage({
+    destination: './public/uploads/avatar',
+    filename: (req, file, cb) => {
+      const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`)
+    }
+  })
+
+}
 
 
 @ApiBearerAuth()
 @Controller()
 @UseFilters(AuthExceptionFilter)
 export class AppController {
-  private wasEdit : Boolean = false;
+  private wasEditPortfolio : Boolean = false;
+  private wasEditChat : Boolean = false;
 
-  constructor(private readonly authService: AuthService, private readonly portfolioService: PortfolioService, private readonly appService: AppService, private readonly usersService: UsersService) {
+  constructor(private readonly authService: AuthService, private readonly messagesService: MessagesService, private readonly portfolioService: PortfolioService, private readonly appService: AppService, private readonly usersService: UsersService) {
 
   }
 
@@ -83,6 +93,7 @@ export class AppController {
     description: 'Index page has loaded',
     type: User,
   })
+  @ApiResponse({ status: 400, description: 'Not valid email' })
   async register(@Res() res: Response, @Body() usersDTO: UsersDTO) {
     await this.appService.createUser(usersDTO)
     res.redirect('/');
@@ -115,9 +126,9 @@ export class AppController {
   })
   @Render('profile')
   async getProfile(@Request() req) {
-    if (this.wasEdit) {
+    if (this.wasEditPortfolio) {
       req.user.portfolio = await this.usersService.getUserPortfolio(req.user.id);
-      this.wasEdit = false;
+      this.wasEditPortfolio = false;
     }
     return {
       user: req.user,
@@ -125,7 +136,7 @@ export class AppController {
     };
   }
 
-
+  @UseGuards(AuthenticatedGuard)
   @Get('/edit')
   @Render('edit')
   @ApiOperation({summary: 'Load edit Profile page'})
@@ -134,10 +145,14 @@ export class AppController {
     description: 'Index page has loaded',
     type: User,
   })
-  editLoad(@Request() req): { message: string } {
-    return { message: req.flash('editError') };
+  editLoad(@Request() req){
+    return {
+      user: req.user,
+      portfolio: req.user.portfolio,
+    };
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post('/edit')
   @ApiOperation({summary: 'Edit profile Data'})
   @ApiResponse({
@@ -146,11 +161,13 @@ export class AppController {
     type: User,
   })
   async editProfile(@Res() res: Response, @Request() req, @Body() portfolioDTO: PortfolioDto) {
-    this.wasEdit = true;
+    this.wasEditPortfolio = true;
+    this.wasEditChat = true;
     await this.appService.editPortfolio(req.user, portfolioDTO);
     res.redirect('/edit');
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Get('/logout')
   @ApiResponse({
     status: 200,
@@ -212,35 +229,38 @@ export class AppController {
 
   @UseGuards(AuthenticatedGuard)
   @Get('chat')
-  @ApiOperation({ summary: 'Load chat page' })
+  @ApiOperation({summary: 'Load chat page'})
   @ApiResponse({
     status: 200,
     description: 'Slider page has loaded',
     type: User,
   })
   @Render('chat')
-  getChat(@Request() req) {
-    return {
-      user: req.user,
-      portfolio: req.user.portfolio
-    };
-  }
-
-/*
-  @UseGuards(AuthenticatedGuard)
-  @Post('/chat')
-  @ApiOperation({summary: 'Add message'})
-  @ApiResponse({
-    status: 200,
-    description: 'Message eas added',
-    type: User,
-  })
-  getMessage(@Request() req, @Body() text: string) {
+  async getChat(@Request() req) {
+    if (this.wasEditChat) {
+      req.user.portfolio = await this.usersService.getUserPortfolio(req.user.id);
+      this.wasEditChat = false;
+    }
+    //let mes = await this.messagesService.findAll();
     return {
       user: req.user,
       portfolio: req.user.portfolio,
-      message: text,
+      //chatMessages: mes
     };
-  }*/
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('/editImage')
+  @ApiOperation({summary: 'Update profile picture'})
+  @ApiResponse({
+    status: 200,
+    description: 'Profile picture was updated',
+    type: User,
+  })
+  async createProfileImage(@Res() res: Response, @Request() req) {
+    this.wasEditPortfolio = true;
+    this.wasEditChat = true;
+    res.redirect('/edit');
+  }
 
 }

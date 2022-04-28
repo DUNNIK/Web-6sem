@@ -1,9 +1,8 @@
 import {Portfolio} from '../entities/portfolio.entity';
-import {Body, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {UsersDTO} from "../users/dto/users.dto";
-import {User} from "../entities/user.entity";
+import {PortfolioDto} from "./dto/portfolio.dto";
 
 @Injectable()
 export class PortfolioService {
@@ -18,8 +17,7 @@ export class PortfolioService {
     }
 
     findOne(id: string): Promise<Portfolio | undefined> {
-
-        return this.portfolioRepository.findOne({id : id});
+        return this.portfolioRepository.findOne({id: id});
     }
 
     randomIntFromInterval(min, max) {
@@ -30,33 +28,37 @@ export class PortfolioService {
         let portfolioEntity = new Portfolio();
         portfolioEntity.user = user;
 
-        if (portfolio.githubLogin) {
-            portfolioEntity.githubLogin = portfolio.githubLogin;
-        }
-        if (portfolio.instagramLogin) {
-            portfolioEntity.instagramLogin = portfolio.instagramLogin;
-        }
-        if (portfolio.telegramLogin) {
-            portfolioEntity.telegramLogin = portfolio.telegramLogin;
-        }
-        if (portfolio.vkLogin) {
-            portfolioEntity.vkLogin = portfolio.vkLogin;
-        }
-        if (portfolio.name) {
-            portfolioEntity.name = portfolio.name;
-        }
-        if (portfolio.surname) {
-            portfolioEntity.surname = portfolio.surname;
-        }
-        if (portfolio.profileImage) {
-            portfolioEntity.profileImage = portfolio.profileImage;
-        } else {
-            portfolioEntity.profileImage = String(this.randomIntFromInterval(1, 15));
-        }
-
+        this.fillPortfolio(portfolio, portfolioEntity);
 
 
         await this.portfolioRepository.save(portfolioEntity)
+    }
+
+    fillPortfolio(portfolioOld, portfolioNew) {
+        if (portfolioOld.githubLogin) {
+            portfolioNew.githubLogin = portfolioOld.githubLogin;
+        }
+        if (portfolioOld.instagramLogin) {
+            portfolioNew.instagramLogin = portfolioOld.instagramLogin;
+        }
+        if (portfolioOld.telegramLogin) {
+            portfolioNew.telegramLogin = portfolioOld.telegramLogin;
+        }
+        if (portfolioOld.vkLogin) {
+            portfolioNew.vkLogin = portfolioOld.vkLogin;
+        }
+        if (portfolioOld.name) {
+            portfolioNew.name = portfolioOld.name;
+        }
+        if (portfolioOld.surname) {
+            portfolioNew.surname = portfolioOld.surname;
+        }
+        if (portfolioOld.profileImage) {
+            portfolioNew.profileImage = portfolioOld.profileImage;
+        } else {
+            portfolioNew.profileImage = String(this.randomIntFromInterval(1, 49)) + '.png';
+        }
+
     }
 
     async addPortfolioWithoutUser(portfolio): Promise<void> {

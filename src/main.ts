@@ -10,6 +10,10 @@ import * as passport from 'passport';
 import {LoggingInterceptor} from "./logging.interceptor";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import {UsersModule} from "./users/users.module";
+import {MessagesModule} from "./messages/messages.module";
+import {ChatModule} from "./chat/chat.module";
+import {AuthModule} from "./auth/auth.module";
+import {PortfolioModule} from "./portfolio/portfolio.module";
 
 
 async function bootstrap() {
@@ -43,7 +47,7 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config, {
-      include: [AppModule, UsersModule]
+      include: [AppModule, UsersModule, MessagesModule, ChatModule, AuthModule, PortfolioModule]
     });
     SwaggerModule.setup('api', app, document);
 

@@ -1,6 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
-import {Column, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Portfolio} from "../../entities/portfolio.entity";
+import { IsString } from 'class-validator';
 
 export class PortfolioDto {
     @IsString()

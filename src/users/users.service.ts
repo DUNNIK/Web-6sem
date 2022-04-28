@@ -1,12 +1,8 @@
 import {User} from '../entities/user.entity';
-import {Injectable, Res} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {Portfolio} from "../entities/portfolio.entity";
-import {Response} from "express";
-import {UsersDTO} from "./dto/users.dto";
-import {PortfolioDto} from "../portfolio/dto/portfolio.dto";
-import {PortfolioService} from "../portfolio/portfolio.service";
 
 @Injectable()
 export class UsersService {

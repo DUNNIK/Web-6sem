@@ -24,17 +24,8 @@ const app = new Vue({
         },
         receivedMessage(message) {
             this.messages.push(message);
-            let messageJson = JSON.stringify(message);
-            localStorage.setItem(this.counter, messageJson);
             this.counter++;
 
-            /*document.querySelector('.card-block').setAttribute('style', 'display: block;');
-            const buildNewMessage = (message) => {
-                const li = document.createElement("li");
-                li.appendChild(message);
-                return li;
-            }
-            document.appendChild(buildNewMessage(message));*/
         },
         getMessagesFromStorage() {
             this.counter = localStorage.length;
@@ -51,15 +42,30 @@ const app = new Vue({
         },
         addImage(image) {
             this.image = image;
+        },
+        addMessages(messages) {
+            if (messages){
+                let allMessages = [];
+                for (let i = 0; i < messages.length; i++) {
+                    allMessages.push(messages[i]);
+                }
+                this.messages = allMessages;
+            }
+        },
+        getHistory() {
+            this.socket.on('msgHistory', (messages) => {
+                this.addMessages(messages)
+            })
+            this.socket.emit('msgHistory')
         }
 
     },
     created() {
-        this.getMessagesFromStorage()
         this.socket = io('http://localhost:12345')
         this.socket.on('msgToClient', (message) => {
             this.receivedMessage(message)
         })
+        this.getHistory();
     }
 })
 

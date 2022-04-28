@@ -8,18 +8,28 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import {MessagesService} from "../messages/messages.service";
+import {MessagesDto} from "../messages/dto/messages.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+    constructor(private readonly messagesService: MessagesService) {
+    }
+
     @WebSocketServer()
     server: Server;
-
     private logger: Logger = new Logger('ChatGateway');
 
     @SubscribeMessage('msgToServer')
-    handleMessage(client: Socket, payload: string): void {
+    async handleMessage(client: Socket, payload: any) {
         this.server.emit('msgToClient', payload);
+        await this.addMessageToStorage(payload);
+    }
 
+    @SubscribeMessage('msgHistory')
+    async handleHistory(client: Socket) {
+        let allMessages = await this.messagesService.findAll();
+        this.server.emit('msgHistory', allMessages);
     }
 
     afterInit(server: Server) {
@@ -34,4 +44,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         this.logger.log(`Client connected: ${client.id}`);
     }
 
+    async addMessageToStorage(payload: any) {
+        let message = new MessagesDto();
+        message.name = payload.name;
+        message.text = payload.text;
+        message.image = payload.image;
+        await this.messagesService.addMessage(message);
+    }
 }
+

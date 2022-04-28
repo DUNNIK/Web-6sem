@@ -288,3 +288,10 @@ body {
     font-family: "Lato", sans-serif;
 }
 
+.change_profile {
+    display: block;
+    background-color: #ff8209;
+}
+.mdl-button {
+    color: #4141da;
+}

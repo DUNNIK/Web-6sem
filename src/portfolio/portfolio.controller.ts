@@ -1,14 +1,14 @@
 import { PortfolioService } from './portfolio.service';
-import {Body, Controller, Get, Param, Post, Res} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
 import {PortfolioDto} from "./dto/portfolio.dto";
 import {validate} from "class-validator";
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Portfolio} from "../entities/portfolio.entity";
-import {UsersService} from "../users/users.service";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @ApiBearerAuth()
-@ApiTags('users')
-@Controller('users')
+@ApiTags('portfolio')
+@Controller('portfolio')
 export class PortfolioController {
     constructor(private readonly portfolioService: PortfolioService) {}
 
@@ -37,6 +37,7 @@ export class PortfolioController {
     @Post('/add')
     @ApiOperation({ summary: 'Add portfolio' })
     @ApiResponse({ status: 400, description: 'Invalid request' })
+    @ApiResponse({status: 500, description: "Internal server error"})
     async addProfile(portfolio : any, @Res() res, user : any): Promise<void> {
         let isOk = false;
         const portfolioDto = new PortfolioDto();
@@ -61,5 +62,18 @@ export class PortfolioController {
         } else {
             res.status(400).json({ msg: 'Invalid request' });
         }
+    }
+
+    @Post('changeImage')
+    @UseInterceptors(FileInterceptor('file'))
+    @ApiOperation({ summary: 'change portfolio image' })
+    @ApiResponse({ status: 400, description: 'Invalid request' })
+    @ApiResponse({status: 201, description: 'Success'})
+    async changeImage(@Body('id') portfolioId : string, @UploadedFile() file: Express.Multer.File): Promise<Portfolio> {
+        console.log(portfolioId);
+        let portfolio = await this.portfolioService.findOne(portfolioId);
+        portfolio.profileImage = file.filename;
+        await this.portfolioService.addPortfolioWithoutUser(portfolio)
+        return await this.portfolioService.findOne(portfolioId);
     }
 }
