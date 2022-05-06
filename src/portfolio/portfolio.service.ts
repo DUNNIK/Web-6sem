@@ -2,7 +2,6 @@ import {Portfolio} from '../entities/portfolio.entity';
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {PortfolioDto} from "./dto/portfolio.dto";
 
 @Injectable()
 export class PortfolioService {
@@ -25,16 +24,15 @@ export class PortfolioService {
     }
 
     async addPortfolio(portfolio, user): Promise<void> {
-        let portfolioEntity = new Portfolio();
-        portfolioEntity.user = user;
-
-        this.fillPortfolio(portfolio, portfolioEntity);
+        let portfolioEntity = this.fillPortfolio(portfolio, user);
 
 
         await this.portfolioRepository.save(portfolioEntity)
     }
 
-    fillPortfolio(portfolioOld, portfolioNew) {
+    fillPortfolio(portfolioOld, user): Portfolio {
+        let portfolioNew = new Portfolio();
+
         if (portfolioOld.githubLogin) {
             portfolioNew.githubLogin = portfolioOld.githubLogin;
         }
@@ -58,35 +56,16 @@ export class PortfolioService {
         } else {
             portfolioNew.profileImage = String(this.randomIntFromInterval(1, 49)) + '.png';
         }
+        if (user) {
+            portfolioNew.user = user;
+        }
 
+        return portfolioNew;
     }
+    async updatePortfolio(id, portfolioNew): Promise<void> {
 
-    async addPortfolioWithoutUser(portfolio): Promise<void> {
-        await this.portfolioRepository.save(portfolio)
+        await this.portfolioRepository.update(id, portfolioNew);
     }
-
-    async updatePortfolio(portfolioNew): Promise<void> {
-
-        await this.portfolioRepository.update(portfolioNew.id, portfolioNew);
-    }
-
-
-
-    async updateOne(id: string, portfolio: any): Promise<Portfolio> {
-        delete portfolio.name;
-
-        await this.portfolioRepository.update(id, portfolio)
-        return this.findOne(id);
-    }
-
-    async findProfile() {
-        const profile = await this.portfolioRepository
-            .createQueryBuilder("portfolio")
-            .leftJoinAndSelect("portfolio.user", "user")
-            .getOne();
-        return profile;
-    }
-
     async remove(id: string): Promise<void> {
         await this.portfolioRepository.delete(id);
     }

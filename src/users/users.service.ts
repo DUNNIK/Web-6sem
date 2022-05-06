@@ -16,7 +16,7 @@ export class UsersService {
         return this.usersRepository.find();
     }
 
-    findOne( id: string): Promise<User> {
+    findOne(id: string): Promise<User> {
         return this.usersRepository.findOne(id);
     }
 
@@ -28,10 +28,12 @@ export class UsersService {
         await this.usersRepository.save(user)
     }
 
-    async updateUser(user): Promise<void> {
-        await this.usersRepository.update(user.id, user);
+    async addUserByEmailAndPassword(email: string, password: string): Promise<void> {
+        const user = new User();
+        user.email = email;
+        user.pass = password;
+        await this.usersRepository.save(user)
     }
-
     async getUserPortfolio(userID): Promise<Portfolio> {
         const user: User = await this.usersRepository.findOne({where: {id: userID}, relations: ['portfolio']});
         return user.portfolio;

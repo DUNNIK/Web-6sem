@@ -10,14 +10,8 @@ export class AppService {
     constructor(private readonly usersService: UsersService, private readonly portfolioService: PortfolioService) {
     }
 
-    randomIntFromInterval(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min)
-    }
-
     async editPortfolio(user: any, portfolio: any) {
-        const portfolioDto = new PortfolioDto();
-
-        this.portfolioService.fillPortfolio(portfolio, portfolioDto);
+        const portfolioDto = this.portfolioService.fillPortfolio(portfolio, user);
 
         const userFind = await this.usersService.findOne(user.id);
 
@@ -32,8 +26,8 @@ export class AppService {
         }
 
         if (portfolioFind) {
-            portfolioDto.id = portfolioF.id;
-            await this.portfolioService.updatePortfolio(portfolioDto)
+            let id = portfolioF.id;
+            await this.portfolioService.updatePortfolio(id, portfolioDto)
         } else {
             await this.portfolioService.addPortfolio(portfolioDto, userFind);
         }
@@ -42,13 +36,12 @@ export class AppService {
     }
 
     async createUser(user: any): Promise<any> {
-
         const userFind = await this.usersService.findByEmail(user.email);
-
 
         if (userFind) {
             throw new UnauthorizedException(400, "The user has already been registered")
         }
+
         const userDTO = new UsersDTO();
         userDTO.email = user.email;
         userDTO.pass = user.password;

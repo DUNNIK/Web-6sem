@@ -241,11 +241,9 @@ export class AppController {
       req.user.portfolio = await this.usersService.getUserPortfolio(req.user.id);
       this.wasEditChat = false;
     }
-    //let mes = await this.messagesService.findAll();
     return {
       user: req.user,
-      portfolio: req.user.portfolio,
-      //chatMessages: mes
+      portfolio: req.user.portfolio
     };
   }
 
