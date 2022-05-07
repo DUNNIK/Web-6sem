@@ -4,6 +4,12 @@ import {ApiProperty} from "@nestjs/swagger";
 
 @Entity('portfolio')
 export class Portfolio{
+    @ApiProperty({
+        required: true,
+        type: 'string',
+        name: 'id',
+        description: 'id of portfolio'
+    })
     @PrimaryGeneratedColumn("uuid")
     public id: string;
 
@@ -74,7 +80,7 @@ export class Portfolio{
         required: true,
         type: 'User',
         name: 'user',
-        description: 'user entity of user portfolio'
+        description: 'user of user portfolio'
     })
     @OneToOne(type => User, user => user.portfolio)
     @JoinColumn()

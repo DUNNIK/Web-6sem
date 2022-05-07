@@ -63,7 +63,6 @@ export class PortfolioService {
         return portfolioNew;
     }
     async updatePortfolio(id, portfolioNew): Promise<void> {
-
         await this.portfolioRepository.update(id, portfolioNew);
     }
     async remove(id: string): Promise<void> {

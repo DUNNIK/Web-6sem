@@ -19,20 +19,8 @@ export class MessagesService {
         return this.messageRepository.findOne(id);
     }
 
-    findByEmail(author: string): Promise<Message | undefined> {
-        return this.messageRepository.findOne({name: author});
-    }
-
     async addMessage(message): Promise<void> {
         await this.messageRepository.save(message)
-    }
-
-    async addPayload(payload : any): Promise<void> {
-        let message = new Message();
-        message.text = payload.text;
-        message.name = payload.name;
-        message.image = payload.image;
-        await this.addMessage(message);
     }
 
 
