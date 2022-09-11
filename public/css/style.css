@@ -56,7 +56,7 @@ ul.header__menu li{
 }
 
 ul.header__menu li a{
-    color: #deb61b;
+    color: #ff8209;
 }
 
 .header__menu{
@@ -65,16 +65,15 @@ ul.header__menu li a{
 }
 
 h1.name{
-    color: #f57800;
+    color: #fcff19;
     font-size: x-large;
-    font-style: oblique;
     font-weight: bolder;
     float: top;
     text-transform: uppercase;
 }
 
 h2{
-    color: #d57200;
+    color: #fcff19;
     font-size: large;
     font-weight: bold;
 }
@@ -99,7 +98,7 @@ ol li {
     position:relative;
     margin:0 0 6px 2em;
     padding:4px 8px;
-    border-top:2px solid #deb61b;
+    border-top:2px solid #fcff19;
     background: #ff8209;
 }
 
@@ -112,7 +111,7 @@ ol li:before {
     width:2em;
     padding:4px 0;
     color: #ff8209;
-    background: #deb61b;
+    background: #fcff19;
     font-weight:bold;
     font-family: Arial, sans-serif;
     text-align:center;
@@ -164,9 +163,8 @@ q{
     font-style: italic;
 }
 
-#about_me img{
-    box-shadow: 0.4em 0.4em 5px rgba(122,122,122,0.5);
-}
+
+
 
 #about_me{
     margin-bottom: 10px;
@@ -175,7 +173,7 @@ q{
 
 header{
     text-align: center;
-    padding: 5em;
+    padding: 2.5em;
 }
 
 footer{
@@ -188,7 +186,7 @@ footer{
 
 footer h2{
     font-size: 14px;
-    color: #c9cc4f;
+    color: #fcff19;
 }
 
 .eating {
@@ -288,4 +286,12 @@ pre code {
 
 body {
     font-family: "Lato", sans-serif;
+}
+
+.change_profile {
+    display: block;
+    background-color: #ff8209;
+}
+.mdl-button {
+    color: #4141da;
 }

@@ -1,10 +1,13 @@
+
 .sidenav {
     width: 130px;
     position: fixed;
     z-index: 1;
     top: 100px;
     right: 10px;
-    background: #fcff19;
+    /* background: #fcff19; */
+    background: rgb(252, 255, 25);
+    background: linear-gradient(177deg, rgb(252, 255, 25) 0%, rgb(255, 130, 9) 90% );
     overflow-x: hidden;
     padding: 8px 0;
 }
@@ -18,11 +21,19 @@
 }
 
 .sidenav a:hover {
-    color: #064579;
+    color: #2e2eed;
 }
 
-.main {
+.sidenav main {
     margin-right: 140px;
     font-size: 28px;
     padding: 0px 10px;
 }
+
+.sidenav credentials_form {
+    padding:10px;
+    border-radius:10px;
+    border: 2px solid #eee;
+    box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+}
+

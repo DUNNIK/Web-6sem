@@ -1,0 +1,31 @@
+<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<header>
+    <section id="about_me" class="header__about_me">
+        <div class="header__logo">
+            <img src=uploads/avatar/{{portfolio.profileImage}} alt="аватар" width="255" height="255">
+        </div>
+        <div class="header__text">
+            <div class="header__name">
+                <h1 class="name">{{portfolio.name}} {{portfolio.surname}}</h1>
+            </div>
+            <div class="header__contacts">
+                <h2>Мои контакты</h2>
+                <ul class="contacts">
+                    <li><a href="https://vk.com/{{portfolio.vkLogin}}"><img src="/img/vk.png" alt="ВКонтакте"  width="50" height="50"></a></li>
+                    <li><a href="https://www.instagram.com/{{portfolio.instagramLogin}}"><img src="/img/instagram.png" alt="Инстаграм"  width="50" height="50"></a></li>
+                    <li><a href="https://t.me/{{portfolio.telegramLogin}}"><img src="/img/telegram.png" alt="Телеграм"  width="50" height="50"></a></li>
+                    <li><a href="https://github.com/{{portfolio.githubLogin}}"><img src="/img/github.png" alt="Гитхаб"  width="50" height="50"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button change_profile" href='/edit'>Изменить профиль</a>
+        </div>
+    </section>
+
+
+</header>

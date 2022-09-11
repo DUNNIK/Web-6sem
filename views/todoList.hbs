@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="css/style.css">
+<link href="css/todoList.css" rel="stylesheet">
+
+<main>
+    <div class="todo-block">
+        <label for="todo-list-input" class="todo-label">Todo List</label>
+        <form id="todo-list-form">
+            <input class="todo-input" id="todo-list-input" type="text" autocomplete="off" required>
+            <button class="todo-button-submit" type="submit">&#8594;</button>
+        </form>
+
+        <ol class="todo-item-list">
+
+        </ol>
+    </div>
+</main>
+
+
+<template id="li-temp">
+    <li class="todo-item__undone">
+        <button class="delete-item-button delete-item-button-not-displayed">&#10008;</button>
+    </li>
+</template>
+
+<script src="/js/todoList.js"></script>
